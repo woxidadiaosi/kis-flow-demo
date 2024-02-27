@@ -9,11 +9,11 @@ import (
 
 // %+v +表示输出结构体字段+值，包括内部复杂类型的字段+值
 func TestKisFuncConfig(t *testing.T) {
-	source := &kisSource{
+	source := &KisSource{
 		Name: "公众号抖音商城户订单数据",
 		Must: []string{"order_id", "user_id"},
 	}
-	opt := &kisFuncOption{
+	opt := &KisFuncOption{
 		CName:         "connectorName1",
 		RetryTime:     3,
 		RetryDuration: time.Microsecond * 3000,

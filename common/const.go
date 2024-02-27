@@ -40,3 +40,12 @@ const (
 	Redis KisConnType = "redis"
 	Kafka KisConnType = "kafka"
 )
+
+const (
+	FunctionIdFirstVirtual = "FunctionIdFirstVirtual"
+	FunctionIdLastVirtual  = "FunctionIdLastVirtual"
+)
+
+type KisRow interface{}
+type KisRowArr []KisRow
+type KisDataMap map[string]KisRowArr

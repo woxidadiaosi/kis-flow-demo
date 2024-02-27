@@ -9,14 +9,14 @@ import (
 // FParam 在当前Flow中Function定制固定配置参数类型
 type FParam map[string]string
 
-// kisSource 表示当前Function的业务源
-type kisSource struct {
+// KisSource 表示当前Function的业务源
+type KisSource struct {
 	Name string   `yaml:"name"` //本层Function的数据源描述
 	Must []string `yaml:"must"` //source必传字段
 }
 
 // KisFuncOption 可选配置
-type kisFuncOption struct {
+type KisFuncOption struct {
 	CName         string        `yaml:"cname"`          //连接器Connector名称
 	RetryTime     uint          `yaml:"retry_times"`    //选填,Function调度重试(不包括正常调度)最大次数
 	RetryDuration time.Duration `yaml:"retry_duration"` //选填,Function调度每次重试最大时间间隔(单位:ms)
@@ -27,11 +27,11 @@ type KisFuncConfig struct {
 	KisType string         `yaml:"kistype"`
 	FName   string         `yaml:"fname"`
 	FMode   string         `yaml:"fmode"`
-	Source  *kisSource     `yaml:"source"`
-	Opt     *kisFuncOption `yaml:"option"`
+	Source  *KisSource     `yaml:"source"`
+	Opt     *KisFuncOption `yaml:"option"`
 }
 
-func NewKisFuncConfig(funcName string, mode common.FMode, source *kisSource, opt *kisFuncOption) *KisFuncConfig {
+func NewKisFuncConfig(funcName string, mode common.FMode, source *KisSource, opt *KisFuncOption) *KisFuncConfig {
 	if source == nil {
 		log.Logger().ErrorF("funcName NewConfig Error, source is nil , funcName = %s\n", funcName)
 		return nil
