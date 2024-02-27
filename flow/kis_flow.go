@@ -182,6 +182,18 @@ func (k *KisFlow) Input() common.KisRowArr {
 	return k.input
 }
 
+func (k *KisFlow) GetName() string {
+	return k.Name
+}
+
+func (k *KisFlow) GetThisFunction() kis.Function {
+	return k.ThisFunction
+}
+
+func (k *KisFlow) GetThisFunctionConf() *config.KisFuncConfig {
+	return k.ThisFunction.GetConfig()
+}
+
 func NewKisFlow(conf *config.KisFlowConfig) kis.Flow {
 	return &KisFlow{
 		Id:        id.KisID(common.KisIdTypeFlow),

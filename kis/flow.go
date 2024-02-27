@@ -12,4 +12,9 @@ type Flow interface {
 	CommitRow(row interface{}) error
 
 	Input() common.KisRowArr
+
+	GetName() string
+
+	GetThisFunction() Function
+	GetThisFunctionConf() *config.KisFuncConfig
 }
