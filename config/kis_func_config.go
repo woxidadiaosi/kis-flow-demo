@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"kis-flow-demo/common"
 	"kis-flow-demo/log"
 	"time"
@@ -24,11 +25,27 @@ type KisFuncOption struct {
 }
 
 type KisFuncConfig struct {
-	KisType string         `yaml:"kistype"`
-	FName   string         `yaml:"fname"`
-	FMode   string         `yaml:"fmode"`
-	Source  *KisSource     `yaml:"source"`
-	Opt     *KisFuncOption `yaml:"option"`
+	KisType  string         `yaml:"kistype"`
+	FName    string         `yaml:"fname"`
+	FMode    string         `yaml:"fmode"`
+	Source   *KisSource     `yaml:"source"`
+	Opt      *KisFuncOption `yaml:"option"`
+	connConf *KisConnConfig `yaml:"connConf"`
+}
+
+func (k *KisFuncConfig) AddConnConf(connConf *KisConnConfig) error {
+	if connConf == nil {
+		return errors.New("connConf is nil")
+	}
+	k.connConf = connConf
+	return connConf.WithFunc(k)
+}
+
+func (k *KisFuncConfig) GetConnConf() (*KisConnConfig, error) {
+	if k.connConf == nil {
+		return nil, errors.New("connConfig is nil")
+	}
+	return k.connConf, nil
 }
 
 func NewKisFuncConfig(funcName string, mode common.FMode, source *KisSource, opt *KisFuncOption) *KisFuncConfig {

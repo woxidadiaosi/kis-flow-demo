@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"kis-flow-demo/common"
 	"kis-flow-demo/config"
+	"kis-flow-demo/conn"
 	"kis-flow-demo/function"
 	"kis-flow-demo/id"
 	"kis-flow-demo/kis"
@@ -32,6 +33,21 @@ type KisFlow struct {
 	buffer common.KisRowArr
 	data   common.KisDataMap
 	input  common.KisRowArr
+}
+
+func (k *KisFlow) GetConnector() (kis.Connector, error) {
+	c := k.ThisFunction.GetConnector()
+	if c == nil {
+		return nil, errors.New("GetConnector() ThisFunction is nil")
+	}
+	return c, nil
+}
+
+func (k *KisFlow) GetConnectorConf() (*config.KisConnConfig, error) {
+	if conn := k.ThisFunction.GetConnector(); conn != nil {
+		return conn.GetConfig(), nil
+	}
+	return nil, errors.New("GetConnectorConf() ThisFunction is nil")
 }
 
 func (k *KisFlow) Run(ctx context.Context) error {
@@ -76,10 +92,31 @@ func (k *KisFlow) Link(fConf *config.KisFuncConfig, fParam config.FParam) error 
 	if err != nil {
 		return err
 	}
+	// create connector
+	if fConf.Opt != nil && fConf.Opt.CName != "" {
+		conf, err := fConf.GetConnConf()
+		if err != nil {
+			panic(err)
+		}
+		connector := conn.NewKisConnector(conf)
+		if err = connector.Init(); err != nil {
+			panic(err)
+		}
 
+		kisFunction.AddConnector(connector)
+
+	}
+	// append Func
+	if err := k.appFunc(kisFunction, fParam); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (k *KisFlow) appFunc(kisFunction kis.Function, fParam config.FParam) error {
 	k.flock.Lock()
 	defer k.flock.Unlock()
-	k.Funcs[fConf.FName] = kisFunction
+	k.Funcs[kisFunction.GetConfig().FName] = kisFunction
 
 	kisFunction.SetFlow(k)
 
@@ -102,8 +139,8 @@ func (k *KisFlow) Link(fConf *config.KisFuncConfig, fParam config.FParam) error 
 	//k.funcParam[fConf.FName] = fParam 不符合规范，对于fParam为引用，外部可能修改，最好单独拷贝一份
 	ps := make(config.FParam) //这里参数也不一定全部不同，可能新传递的覆盖了默认的
 	//先添加function 默认携带的Params参数
-	if fConf.Opt != nil && fConf.Opt.Params != nil {
-		for k, v := range fConf.Opt.Params {
+	if kisFunction.GetConfig().Opt != nil && kisFunction.GetConfig().Opt.Params != nil {
+		for k, v := range kisFunction.GetConfig().Opt.Params {
 			ps[k] = v
 		}
 	}
@@ -115,7 +152,6 @@ func (k *KisFlow) Link(fConf *config.KisFuncConfig, fParam config.FParam) error 
 	// 将得到的FParams存留在flow结构体中，用来function业务直接通过Hash获取
 	// key 为当前Function的KisId，不用Fid的原因是为了防止一个Flow添加两个相同策略Id的Function
 	k.funcParam[kisFunction.GetId()] = ps
-
 	return nil
 }
 

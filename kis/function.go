@@ -16,6 +16,10 @@ type Function interface {
 
 	GetFlow() Flow
 
+	AddConnector(c Connector) error
+
+	GetConnector() Connector
+
 	CreateId()
 
 	GetId() string

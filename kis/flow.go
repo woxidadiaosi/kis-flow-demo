@@ -17,4 +17,7 @@ type Flow interface {
 
 	GetThisFunction() Function
 	GetThisFunctionConf() *config.KisFuncConfig
+
+	GetConnector() (Connector, error)
+	GetConnectorConf() (*config.KisConnConfig, error)
 }

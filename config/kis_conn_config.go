@@ -19,7 +19,7 @@ type KisConnConfig struct {
 
 func NewKisConnConfig(cName string, adds string, key string, t common.KisConnType, param map[string]string) *KisConnConfig {
 	return &KisConnConfig{
-		KisType:    string(common.C),
+		KisType:    string(common.KisConnection),
 		CName:      cName,
 		AddrString: adds,
 		Type:       t,

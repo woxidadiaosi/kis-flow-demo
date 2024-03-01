@@ -16,6 +16,8 @@ type BaseFunction struct {
 
 	Flow kis.Flow
 
+	connector kis.Connector
+
 	N kis.Function
 	P kis.Function
 }
@@ -48,6 +50,17 @@ func (b *BaseFunction) GetFlow() kis.Flow {
 	return b.Flow
 }
 
+func (b *BaseFunction) AddConnector(c kis.Connector) error {
+	if c == nil {
+		return errors.New("conn is nil")
+	}
+	b.connector = c
+	return nil
+}
+
+func (b *BaseFunction) GetConnector() kis.Connector {
+	return b.connector
+}
 func (b *BaseFunction) CreateId() {
 	b.Id = id.KisID(common.KisIdTypeFunction)
 }

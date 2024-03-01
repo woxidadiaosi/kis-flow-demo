@@ -1,6 +1,9 @@
 package kis
 
-import "context"
+import (
+	"context"
+	"kis-flow-demo/common"
+)
 
 // FaaS Function as a Service
 
@@ -15,3 +18,15 @@ type funcRouter map[string]Faas
 // key: Flow Name
 // value: Flow
 type flowRouter map[string]Flow
+
+type ConnInit func(conn Connector) error
+
+type connInitRouter map[string]ConnInit
+
+type Caas func(context.Context, Connector, Function, Flow, interface{}) error
+
+type connFuncRouter map[string]Caas
+
+type connSL map[common.FMode]connFuncRouter
+
+type connTree map[string]connSL
